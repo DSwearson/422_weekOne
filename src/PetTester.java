@@ -25,6 +25,10 @@ public class PetTester {
 			} else if(choice == 6) {
 				List<Pet> results = searchByAge(input, pets);
 				viewAllPets(results);
+			} else if(choice == 3) {
+				updatePet(input, pets);
+			} else if( choice == 4) {
+				removePet(input, pets);
 			}
 			choice = showMenu(input);
 		}
@@ -36,6 +40,8 @@ public class PetTester {
 		System.out.println("What would you like to do?");
 		System.out.println("1) View all pets");
 		System.out.println("2) Add more pets");
+		System.out.println("3) Update an existing pet");
+		System.out.println("4) Remove an existing pet");
 		System.out.println("5) Search pets by name");
 		System.out.println("6) Search pets by age");
 		System.out.println("7) Exit program");
@@ -99,5 +105,39 @@ public class PetTester {
 			}
 		}
 		return results;
+	}
+	
+	private static void updatePet(Scanner input, List<Pet> pets) {
+		viewAllPets(pets);
+		System.out.print("Enter the pet ID you want to update:");
+		int id = input.nextInt();
+		input.nextLine();
+		if(id < 0 || id >= pets.size()) {
+			System.out.println("Pet not found");
+			return;
+		}
+		Pet pet = pets.get(id);
+		String oldName = pet.getName();
+		int oldAge = pet.getAge();
+		System.out.print("Enter new name and new age:");
+		String name = input.next();
+		int age = input.nextInt();
+		input.nextLine();
+		pet.setName(name);
+		pet.setAge(age);
+		System.out.printf("%s %d changed to %s %d %n ", oldName, oldAge, pet.getName(), pet.getAge());
+	}
+	
+	private static void removePet(Scanner input, List<Pet> pets) {
+		viewAllPets(pets);
+		System.out.print("Enter the pet ID to remove:");
+		int id = input.nextInt();
+		input.nextLine();
+		if(id < 0 || id >= pets.size()) {
+			System.out.println("Pet not found");
+			return;
+		}
+		Pet pet = pets.remove(id);
+		System.out.println(pet + " is removed.");
 	}
 }
