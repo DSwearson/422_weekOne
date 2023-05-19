@@ -63,16 +63,33 @@ public class PetTester {
 	private static void addPets(Scanner input, List<Pet> pets) {
 		while(true) {
 			System.out.print("add pet (name, age): ");
-			String name = input.next();
-			if(name.equalsIgnoreCase("done")) {
-				input.nextLine();
+			String data[] = input.nextLine().split(" ");
+			if(data[0].equalsIgnoreCase("done")) {
 				return;
 			}
-			int age = input.nextInt();
-			input.nextLine();
-			Pet pet = new Pet(name, age);
+			if(pets.size() == 5) {
+				System.out.println("Error: Database is full.");
+				return;
+			}
+			if(data.length != 2) {
+				System.out.printf("error: %s is not a valid input %n", String.join(" ", data));
+				continue;
+			}
+			int age =0;
+			try {
+			age = Integer.parseInt(data[1]);
+			if(age < 0 || age > 20) {
+				System.out.printf("%s is not a valid age%n", data[1]);
+				continue;
+			}
+			} catch(NumberFormatException e) {
+				System.out.printf("%s is not a valid age%n", data[1]);
+				continue;
+			}
+			Pet pet = new Pet(data[0], age);
 			pets.add(pet);
 		}
+		
 	}
 	
 	private static List<Pet> searchByName(Scanner input, List<Pet> pets) {
@@ -127,7 +144,7 @@ public class PetTester {
 		int id = input.nextInt();
 		input.nextLine();
 		if(id < 0 || id >= pets.size()) {
-			System.out.println("Pet not found");
+			System.out.printf("Error: ID %d does not exist.%n", id);
 			return;
 		}
 		Pet pet = pets.remove(id);
