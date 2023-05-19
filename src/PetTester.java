@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,28 +13,21 @@ public class PetTester {
 		Scanner input = new Scanner(System.in);
 
 		//data structure to manage the pets
-		List<Pet> pets = new ArrayList<>();
+		List<Pet> pets = loadFile();
 		
 		//
 		int choice = showMenu(input);
-		while(choice != 7) {
+		while(choice != 4) {
 			if(choice == 1) {
 				viewAllPets(pets);
 			} else if(choice == 2) {
 			addPets(input, pets);	
-			} else if(choice == 5) {
-				List<Pet> results = searchByName(input, pets);
-				viewAllPets(results);
-			} else if(choice == 6) {
-				List<Pet> results = searchByAge(input, pets);
-				viewAllPets(results);
 			} else if(choice == 3) {
-				updatePet(input, pets);
-			} else if( choice == 4) {
 				removePet(input, pets);
 			}
 			choice = showMenu(input);
 		}
+		saveFile(pets);
 		System.out.println("Goodbye!");
 	}
 
@@ -40,11 +36,8 @@ public class PetTester {
 		System.out.println("What would you like to do?");
 		System.out.println("1) View all pets");
 		System.out.println("2) Add more pets");
-		System.out.println("3) Update an existing pet");
-		System.out.println("4) Remove an existing pet");
-		System.out.println("5) Search pets by name");
-		System.out.println("6) Search pets by age");
-		System.out.println("7) Exit program");
+		System.out.println("3) Remove an existing pet");
+		System.out.println("4) Exit program");
 		System.out.print("Your choice:");
 		int choice = input.nextInt();
 		input.nextLine();
@@ -139,5 +132,32 @@ public class PetTester {
 		}
 		Pet pet = pets.remove(id);
 		System.out.println(pet + " is removed.");
+	}
+	
+	private static void saveFile(List<Pet> pets) {
+		try(PrintWriter writer = new PrintWriter(new File("Pets.txt"))) {
+			for(Pet pet: pets) {
+				writer.println(pet);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static List<Pet> loadFile() {
+		List<Pet> pets = new ArrayList<>();
+		try(Scanner reader = new Scanner(new File("Pets.txt"))) {
+			while(reader.hasNextLine()) {
+			String data = reader.nextLine();
+			String name = data.substring(0, data.indexOf(" "));
+			int age = Integer.parseInt(data.substring(data.indexOf(" ") + 1));
+			Pet pet = new Pet(name, age);
+			pets.add(pet);
+			}
+		} catch (FileNotFoundException e) {
+			return new ArrayList<>();
+		}
+		return pets;
 	}
 }
